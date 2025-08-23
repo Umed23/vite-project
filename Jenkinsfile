@@ -2,7 +2,12 @@ pipeline {
     agent any
 
     tools {
-        nodejs "NodeJS" // Jenkins NodeJS installation
+        nodejs "NodeJS"
+    }
+
+    environment {
+        // Force the PATH to include system directories
+        PATH = "C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;${tool 'NodeJS'}/bin;${env.PATH}"
     }
 
     stages {
@@ -14,26 +19,26 @@ pipeline {
 
         stage('Check Node & NPM') {
             steps {
-                powershell 'node -v'
-                powershell 'npm -v'
+                bat 'node -v'
+                bat 'npm -v'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                powershell 'npm install'
+                bat 'npm install'
             }
         }
 
         stage('Build') {
             steps {
-                powershell 'npm run build'
+                bat 'npm run build'
             }
         }
 
         stage('Serve App') {
             steps {
-                powershell 'npm install -g serve'
+                bat 'npm install -g serve'
                 echo "✅ Application built. Run 'serve -s dist -l 5000' manually to serve."
             }
         }
