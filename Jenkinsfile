@@ -1,6 +1,12 @@
 pipeline {
     agent any
 
+    environment {
+        NODE_PATH = "C:\\Program Files\\nodejs\\node.exe"
+        NPM_PATH = "C:\\Program Files\\nodejs\\npm.cmd"
+        PORT = 5000
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -10,33 +16,34 @@ pipeline {
 
         stage('Check Node & NPM') {
             steps {
-                bat 'node -v'
-                bat 'npm -v'
+                bat "\"${NODE_PATH}\" -v"
+                bat "\"${NPM_PATH}\" -v"
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                bat 'npm install'
+                bat "\"${NPM_PATH}\" install"
             }
         }
 
         stage('Build') {
             steps {
-                bat 'npm run build'
+                bat "\"${NPM_PATH}\" run build"
             }
         }
 
         stage('Serve App') {
             steps {
                 script {
-                    def port = 5000
+                    // Install serve globally if not already installed
+                    bat "\"${NPM_PATH}\" install -g serve"
 
-                    bat 'npm install -g serve'
-                    bat "start /B powershell -Command \"serve -s dist -l ${port}\""
+                    // Run the app in the background
+                    bat "start /B powershell -Command \"serve -s dist -l ${PORT}\""
 
-                    echo "✅ You are running this application on port: ${port}"
-                    echo "🌐 Open in browser: http://localhost:${port}"
+                    echo "✅ Application is running on port ${PORT}"
+                    echo "🌐 Open in browser: http://localhost:${PORT}"
                 }
             }
         }
