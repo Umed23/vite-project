@@ -14,26 +14,26 @@ pipeline {
 
         stage('Check Node & NPM') {
             steps {
-                bat 'node -v'
-                bat 'npm -v'
+                powershell 'node -v'
+                powershell 'npm -v'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                bat 'npm install'
+                powershell 'npm install'
             }
         }
 
         stage('Build') {
             steps {
-                bat 'npm run build'
+                powershell 'npm run build'
             }
         }
 
         stage('Serve App') {
             steps {
-                bat 'npm install -g serve'
+                powershell 'npm install -g serve'
                 echo "✅ Application built. Run 'serve -s dist -l 5000' manually to serve."
             }
         }
