@@ -2,44 +2,45 @@ pipeline {
     agent any
 
     tools {
-        nodejs "NodeJS" // Make sure this matches your Jenkins NodeJS installation name
+        nodejs "NodeJS" // Jenkins NodeJS installation
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Umed23/vite-project.git'
+            }
+        }
+
+        stage('Check Node & NPM') {
+            steps {
+                bat 'node -v'
+                bat 'npm -v'
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
-                echo 'Installing React dependencies...'
-                dir('test') {
-                    bat 'npm install'
-                }
+                bat 'npm install'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Building the React application...'
-                dir('test') {
-                    bat 'npm run build'
-                }
+                bat 'npm run build'
             }
         }
 
-        stage('Test') {
+        stage('Serve App') {
             steps {
-                echo 'Running tests...'
-                dir('test') {
-                    bat 'npm test -- --watchAll=false'
-                }
+                bat 'npm install -g serve'
+                echo "✅ Application built. Run 'serve -s dist -l 5000' manually to serve."
             }
         }
 
-        stage('Deploy') {
+        stage('Archive Build') {
             steps {
-                echo 'Deploying the application...'
-                dir('test') {
-                    bat 'npm install -g serve'
-                    echo "✅ Application built. To serve locally, run 'serve -s build' manually."
-                }
+                archiveArtifacts artifacts: 'dist/**', fingerprint: true
             }
         }
     }
