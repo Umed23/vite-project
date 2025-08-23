@@ -1,14 +1,8 @@
 pipeline {
     agent any
 
-    environment {
-        NODE_PATH = "C:\\Program Files\\nodejs\\node.exe"
-        NPM_PATH = "C:\\Program Files\\nodejs\\npm.cmd"
-        PORT = 5000
-    }
-
     stages {
-        stage('Checkout') {
+        stage('Checkout SCM') {
             steps {
                 git branch: 'main', url: 'https://github.com/Umed23/vite-project.git'
             }
@@ -16,48 +10,33 @@ pipeline {
 
         stage('Check Node & NPM') {
             steps {
-                bat "\"${NODE_PATH}\" -v"
-                bat "\"${NPM_PATH}\" -v"
+                bat '"C:\\Program Files\\nodejs\\node.exe" -v'
+                bat '"C:\\Program Files\\nodejs\\npm.cmd" -v'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                bat "\"${NPM_PATH}\" install"
+                bat '"C:\\Program Files\\nodejs\\npm.cmd" install'
             }
         }
 
         stage('Build') {
             steps {
-                bat "\"${NPM_PATH}\" run build"
+                bat '"C:\\Program Files\\nodejs\\npm.cmd" run build'
             }
         }
 
         stage('Serve App') {
             steps {
-                script {
-                    // Install serve globally if not already installed
-                    bat "\"${NPM_PATH}\" install -g serve"
-
-                    // Run the app in the background
-                    bat "start /B powershell -Command \"serve -s dist -l ${PORT}\""
-
-                    echo "✅ Application is running on port ${PORT}"
-                    echo "🌐 Open in browser: http://localhost:${PORT}"
-                }
-            }
-        }
-
-        stage('Archive Build') {
-            steps {
-                archiveArtifacts artifacts: 'dist/**', fingerprint: true
+                bat 'start "" cmd /c "C:\\Program Files\\nodejs\\npm.cmd run dev"'
             }
         }
     }
 
     post {
         success {
-            echo "Build completed successfully ✅"
+            echo "Build succeeded ✅"
         }
         failure {
             echo "Build failed ❌"
