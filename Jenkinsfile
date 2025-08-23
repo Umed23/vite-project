@@ -2,56 +2,54 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'NodeJS' // NodeJS installation name configured in Jenkins
+        nodejs "NodeJS" // Make sure this matches your Jenkins NodeJS installation name
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/Umed23/vite-project.git'
-            }
-        }
-
-        stage('Check Node & NPM') {
-            steps {
-                powershell 'node -v'
-                powershell 'npm -v'
-            }
-        }
-
         stage('Install Dependencies') {
             steps {
-                powershell 'npm install'
+                echo 'Installing React dependencies...'
+                dir('test') {
+                    bat 'npm install'
+                }
             }
         }
 
         stage('Build') {
             steps {
-                powershell 'npm run build'
+                echo 'Building the React application...'
+                dir('test') {
+                    bat 'npm run build'
+                }
             }
         }
 
-        stage('Serve App') {
+        stage('Test') {
             steps {
-                powershell 'npm install -g serve'
-                powershell 'Start-Process powershell -ArgumentList "serve -s dist -l 5000" -NoNewWindow'
-                echo "✅ Application running on port 5000"
+                echo 'Running tests...'
+                dir('test') {
+                    bat 'npm test -- --watchAll=false'
+                }
             }
         }
 
-        stage('Archive Build') {
+        stage('Deploy') {
             steps {
-                archiveArtifacts artifacts: 'dist/**', fingerprint: true
+                echo 'Deploying the application...'
+                dir('test') {
+                    bat 'npm install -g serve'
+                    echo "✅ Application built. To serve locally, run 'serve -s build' manually."
+                }
             }
         }
     }
 
     post {
         success {
-            echo "Build completed successfully ✅"
+            echo "Pipeline completed successfully ✅"
         }
         failure {
-            echo "Build failed ❌"
+            echo "Pipeline failed ❌"
         }
     }
 }
