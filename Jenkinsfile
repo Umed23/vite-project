@@ -10,20 +10,20 @@ pipeline {
 
         stage('Check Node & NPM') {
             steps {
-                sh 'node -v'
-                sh 'npm -v'
+                bat 'node -v'
+                bat 'npm -v'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                bat 'npm install'
             }
         }
 
         stage('Build') {
             steps {
-                sh 'npm run build'
+                bat 'npm run build'
             }
         }
 
@@ -31,8 +31,13 @@ pipeline {
             steps {
                 script {
                     def port = 5000
-                    sh 'npm install -g serve'
-                    sh "nohup serve -s dist -l ${port} > serve.log 2>&1 &"
+
+                    // Install serve globally
+                    bat 'npm install -g serve'
+
+                    // Run serve in background using PowerShell
+                    bat "start /B powershell -Command \"serve -s dist -l ${port}\""
+
                     echo "✅ You are running this application on port: ${port}"
                     echo "🌐 Open in browser: http://localhost:${port}"
                 }
