@@ -1,6 +1,15 @@
 pipeline {
     agent any
 
+    // Use NodeJS installed via Jenkins NodeJS plugin
+    tools {
+        nodejs 'NodeJS' // <-- Replace 'NodeJS' with the name you gave in Jenkins Global Tool Configuration
+    }
+
+    environment {
+        PATH = "${tool('NodeJS')}/bin;${env.PATH}"
+    }
+
     stages {
         stage('Checkout SCM') {
             steps {
@@ -8,11 +17,16 @@ pipeline {
             }
         }
 
+        stage('Check Node & NPM') {
+            steps {
+                bat 'node -v'
+                bat 'npm -v'
+            }
+        }
 
         stage('Install Dependencies') {
             steps {
-                bat 'npm install'
-
+                bat 'npm ci'  // faster, clean install
             }
         }
 
@@ -22,14 +36,18 @@ pipeline {
             }
         }
 
-        // stage('Serve App') {
-        //     steps {
-        //         // Only for testing locally; remove in production CI
-        //         bat 'npm run dev'
-        //     }
-        // }
+        stage('Serve App') {
+            steps {
+                bat 'npm run dev'
+            }
+        }
 
-        
+        stage('Archive Build') {
+            steps {
+                // Archive built files (adjust folder if different)
+                archiveArtifacts artifacts: 'dist/**', fingerprint: true
+            }
+        }
     }
 
     post {
