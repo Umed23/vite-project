@@ -32,10 +32,7 @@ pipeline {
                 script {
                     def port = 5000
 
-                    // Install serve globally
                     bat 'npm install -g serve'
-
-                    // Run serve in background using PowerShell
                     bat "start /B powershell -Command \"serve -s dist -l ${port}\""
 
                     echo "✅ You are running this application on port: ${port}"
