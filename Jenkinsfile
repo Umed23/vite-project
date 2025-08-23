@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'NodeJS' // the NodeJS tool name configured in Jenkins
+        nodejs 'NodeJS' // NodeJS installation name configured in Jenkins
     }
 
     stages {
@@ -14,27 +14,27 @@ pipeline {
 
         stage('Check Node & NPM') {
             steps {
-                bat 'node -v'
-                bat 'npm -v'
+                powershell 'node -v'
+                powershell 'npm -v'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                bat 'npm install'
+                powershell 'npm install'
             }
         }
 
         stage('Build') {
             steps {
-                bat 'npm run build'
+                powershell 'npm run build'
             }
         }
 
         stage('Serve App') {
             steps {
-                bat 'npm install -g serve'
-                bat 'start /B powershell -Command "serve -s dist -l 5000"'
+                powershell 'npm install -g serve'
+                powershell 'Start-Process powershell -ArgumentList "serve -s dist -l 5000" -NoNewWindow'
                 echo "✅ Application running on port 5000"
             }
         }
