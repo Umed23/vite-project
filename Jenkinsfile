@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'NodeJS' // Replace with your NodeJS tool name in Jenkins
+        nodejs 'NodeJS' // the NodeJS tool name configured in Jenkins
     }
 
     stages {
-        stage('Checkout SCM') {
+        stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/Umed23/vite-project.git'
             }
@@ -21,7 +21,7 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                bat 'npm ci'
+                bat 'npm install'
             }
         }
 
@@ -33,8 +33,9 @@ pipeline {
 
         stage('Serve App') {
             steps {
-                // Non-blocking serve (optional for CI)
-                bat 'start /b npm run dev'
+                bat 'npm install -g serve'
+                bat 'start /B powershell -Command "serve -s dist -l 5000"'
+                echo "✅ Application running on port 5000"
             }
         }
 
@@ -47,10 +48,10 @@ pipeline {
 
     post {
         success {
-            echo 'Build succeeded ✅'
+            echo "Build completed successfully ✅"
         }
         failure {
-            echo 'Build failed ❌'
+            echo "Build failed ❌"
         }
     }
 }
