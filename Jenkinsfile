@@ -1,27 +1,52 @@
 pipeline {
     agent any
+
+    environment {
+        // Add Node.js to PATH
+        PATH = "C:\\Program Files\\nodejs;${env.PATH}"
+    }
+
     stages {
         stage('Checkout SCM') {
             steps {
                 git branch: 'main', url: 'https://github.com/Umed23/vite-project.git'
             }
         }
-       stage('Install Dependencies') {
+
+        stage('Check Node & NPM') {
             steps {
-                bat 'npm install'
+                bat 'node -v'
+                bat 'npm -v'
             }
         }
+
+        stage('Install Dependencies') {
+            steps {
+                // Clean install for CI
+                bat 'npm ci'
+            }
+        }
+
         stage('Build') {
             steps {
                 bat 'npm run build'
             }
         }
+
         stage('Serve App') {
             steps {
+                // Only for testing locally; remove in production CI
                 bat 'npm run dev'
             }
         }
+
+        stage('Archive Build') {
+            steps {
+                archiveArtifacts artifacts: 'dist/**', fingerprint: true
+            }
+        }
     }
+
     post {
         success {
             echo 'Build succeeded ✅'
