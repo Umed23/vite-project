@@ -6,7 +6,7 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/Umed23/vite-project.git'
             }
         }
-        stage('Install Dependencies') {
+       stage('Install Dependencies') {
             steps {
                 bat 'npm install'
             }
@@ -23,7 +23,11 @@ pipeline {
         }
     }
     post {
-        success { echo 'Build succeeded ✅' }
-        failure { echo 'Build failed ❌' }
+        success {
+            echo 'Build succeeded ✅'
+        }
+        failure {
+            echo 'Build failed ❌'
+        }
     }
 }
