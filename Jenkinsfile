@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        // Add Node.js to PATH
-        PATH = "C:\\Program Files\\nodejs;${env.PATH}"
-    }
-
     stages {
         stage('Checkout SCM') {
             steps {
@@ -22,8 +17,7 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                // Clean install for CI
-                bat 'npm ci'
+                bat 'npm install'
             }
         }
 
@@ -40,11 +34,7 @@ pipeline {
             }
         }
 
-        stage('Archive Build') {
-            steps {
-                archiveArtifacts artifacts: 'dist/**', fingerprint: true
-            }
-        }
+        
     }
 
     post {
