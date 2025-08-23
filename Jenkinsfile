@@ -1,14 +1,17 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs "NodeJS"   // Make sure you have NodeJS tool configured in Jenkins
-    }
-
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/Umed23/vite-project.git'
+            }
+        }
+
+        stage('Check Node & NPM') {
+            steps {
+                sh 'node -v'
+                sh 'npm -v'
             }
         }
 
@@ -24,12 +27,15 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            when {
-                expression { fileExists('package.json') && readJSON(file: 'package.json').scripts.test != null }
-            }
+        stage('Serve App') {
             steps {
-                sh 'npm test'
+                script {
+                    def port = 5000
+                    sh 'npm install -g serve'
+                    sh "nohup serve -s dist -l ${port} > serve.log 2>&1 &"
+                    echo "✅ You are running this application on port: ${port}"
+                    echo "🌐 Open in browser: http://localhost:${port}"
+                }
             }
         }
 
