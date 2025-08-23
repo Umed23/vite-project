@@ -8,16 +8,11 @@ pipeline {
             }
         }
 
-        stage('Check Node & NPM') {
-            steps {
-                bat 'node -v'
-                bat 'npm -v'
-            }
-        }
 
         stage('Install Dependencies') {
             steps {
                 bat 'npm install'
+
             }
         }
 
@@ -27,12 +22,12 @@ pipeline {
             }
         }
 
-        stage('Serve App') {
-            steps {
-                // Only for testing locally; remove in production CI
-                bat 'npm run dev'
-            }
-        }
+        // stage('Serve App') {
+        //     steps {
+        //         // Only for testing locally; remove in production CI
+        //         bat 'npm run dev'
+        //     }
+        // }
 
         
     }
