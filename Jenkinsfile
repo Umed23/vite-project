@@ -39,7 +39,7 @@ pipeline {
         stage('Serve App') {
             steps {
                 bat 'npm install -g serve'
-                echo "✅ Application built. Run 'serve -s dist -l 5000' manually to serve."
+                bat 'serve -s build -l 3000 &'
             }
         }
 
