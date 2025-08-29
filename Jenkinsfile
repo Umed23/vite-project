@@ -38,13 +38,10 @@ pipeline {
 
         stage('Serve App') {
             steps {
-                dir('frontend') {
-                    bat 'npm install -g serve'
-                    bat 'serve -s build -l 3000 &'
-                }
+                bat 'npm install -g serve'
+                bat 'serve -s build -l 3000 &'
             }
         }
-
 
         stage('Archive Build') {
             steps {
